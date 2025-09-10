@@ -20,7 +20,10 @@ def bisection_method(x):
     interval = [0, 10]
     left_bound = interval[0]
     right_bound = interval[1]
-    Length = right_bound - left_bound
+    interval_length = right_bound - left_bound
     x_middle = (left_bound + right_bound) / 2
-    x1 = left_bound + Length / 4
-    
+    x1 = left_bound + interval_length / 4
+    x2 = right_bound - interval_length / 4
+
+    f_x1 = objective_function(x1)
+    f_x2 = objective_function(x2)
