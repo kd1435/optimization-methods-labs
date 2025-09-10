@@ -10,3 +10,17 @@
 5. Vizualizuokite tikslo funkciją ir bandymo taškus.
 
 """
+
+def objective_function(x):
+    return (x**2 - 5)**2 / 4
+
+print (objective_function(1))
+
+def bisection_method(x):
+    interval = [0, 10]
+    left_bound = interval[0]
+    right_bound = interval[1]
+    Length = right_bound - left_bound
+    x_middle = (left_bound + right_bound) / 2
+    x1 = left_bound + Length / 4
+    
