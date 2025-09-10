@@ -1,0 +1,12 @@
+"""
+1. Suprogramuokite vienmačio optimizavimo intervalo dalijimo pusiau, auksinio pjūvio ir Niutono metodo algoritmus.
+
+2. Aprašykite tikslo funkciją f(x) = (x^2 − 5)^2 / 4
+
+3. Minimizuokite šią funkciją intervalo dalijimo pusiau ir auksinio pjūvio metodais intervale [0,10] iki tikslumo 10^−4 bei Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
+
+4. Palyginkite rezultatus: gauti sprendiniai, rastas funkcijos minimumo įvertis, atliktų žingsnių ir funkcijų skaičiavimų skaičius.
+
+5. Vizualizuokite tikslo funkciją ir bandymo taškus.
+
+"""
