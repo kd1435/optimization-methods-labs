@@ -17,6 +17,8 @@ def objective_function(x):
 print (objective_function(1))
 
 def bisection_method(x):
+    lipschitz_constant = 0.05
+
     interval = [0, 10]
     left_bound = interval[0]
     right_bound = interval[1]
