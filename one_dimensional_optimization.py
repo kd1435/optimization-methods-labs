@@ -31,6 +31,8 @@ def bisection_method(x):
     f_x2 = objective_function(x2)
     f_x_middle = objective_function(x_middle)
 
+    iteration = 0
+
     while (interval_length > lipschitz_constant):
         interval_length = right_bound - left_bound
 
@@ -43,5 +45,7 @@ def bisection_method(x):
         else:
             left_bound = x1
             right_bound = x2
+
+        iteration += 1
 
 bisection_method(0)
