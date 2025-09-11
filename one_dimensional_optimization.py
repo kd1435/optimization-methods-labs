@@ -14,7 +14,7 @@
 def objective_function(x):
     return (x**2 - 5)**2 / 4
 
-print (objective_function(1))
+# print (objective_function(1))
 
 def bisection_method(x):
     lipschitz_constant = 0.05
@@ -43,3 +43,5 @@ def bisection_method(x):
         else:
             left_bound = x1
             right_bound = x2
+
+bisection_method(0)
