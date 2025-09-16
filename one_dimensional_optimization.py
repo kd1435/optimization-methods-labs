@@ -44,6 +44,8 @@ def bisection_method(x):
             left_bound = x1
             right_bound = x2
 
+        # TODO: Fix concatenation of strings and numbers in print()
+
         print("Current iteration: " + iteration)
         print("Interval: " + interval)
         print("Interval length: " + interval_length)
