@@ -35,7 +35,10 @@ def bisection_method():
     print("-------------------------------------------------")
     print()
 
+    # TODO: Optimize the while loop, minimize the amount of calls to objective_function
+
     iteration = 0
+    objective_function_calls = 0
     while (interval_length > lipschitz_constant):
         print("Current iteration:", iteration)
         print("Interval:", [left_bound, right_bound])
