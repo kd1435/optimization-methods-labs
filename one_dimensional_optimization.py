@@ -44,14 +44,12 @@ def bisection_method(x):
             left_bound = x1
             right_bound = x2
 
-        # TODO: Fix concatenation of strings and numbers in print()
-
-        print("Current iteration: " + iteration)
-        print("Interval: " + interval)
-        print("Interval length: " + interval_length)
-        print("f_x1: " + f_x1)
-        print("f_x2: " + f_x2)
-        print("f_x_middle: " + f_x_middle)
+        print("Current iteration: ", iteration)
+        print("Interval: ", interval)
+        print("Interval length: ", interval_length)
+        print("f_x1: ", f_x1)
+        print("f_x2: ", f_x2)
+        print("f_x_middle: ", f_x_middle)
 
         interval_length = right_bound - left_bound
         iteration += 1
