@@ -11,9 +11,24 @@
 
 """
 
-import matplotlib
+from matplotlib import *
+from dataclasses import dataclass
 
-class bisection_interval:
+@dataclass
+class bisection_variables:
+    def __init__(self, interval):
+        self.left_bound = interval[0]
+        self.right_bound = interval[1]
+        self.interval_length = self.right_bound - self.left_bound
+        self.x1 = self.left_bound + self.interval_length / 4
+        self.x_middle = (self.left_bound + self.right_bound) / 2
+        self.f_x1 = 0
+        self.f_x_middle = 0
+        self.f_x2 = 0
+
+    def (self, )
+        
+   
     
 
 def objective_function(x):
@@ -25,9 +40,7 @@ def bisection_method():
     lipschitz_constant = 10**-4 # based on assignment instructions
     interval = [0, 10] # based on assignment instructions
 
-    left_bound = interval[0]
-    right_bound = interval[1]
-    interval_length = right_bound - left_bound
+    variables = bisection_variables(interval)
 
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
@@ -50,14 +63,9 @@ def bisection_method():
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
         
-        x1 = left_bound + interval_length / 4
-        x_middle = (left_bound + right_bound) / 2
         
 
-        f_x1 = objective_function(x1)
-        f_x_middle = objective_function(x_middle)
-
-        if (f_x1 < f_x_middle):
+        if (variables.f_x1 < variables.f_x_middle):
             right_bound = x_middle
         else: 
             x2 = right_bound - interval_length / 4
