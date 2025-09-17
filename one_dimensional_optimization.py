@@ -11,6 +11,11 @@
 
 """
 
+import matplotlib
+
+class bisection_interval:
+    
+
 def objective_function(x):
     return (x**2 - 5)**2 / 4
 
@@ -45,9 +50,8 @@ def bisection_method():
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
         
-
-        x_middle = (left_bound + right_bound) / 2
         x1 = left_bound + interval_length / 4
+        x_middle = (left_bound + right_bound) / 2
         
 
         f_x1 = objective_function(x1)
