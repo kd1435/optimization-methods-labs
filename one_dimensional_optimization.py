@@ -17,15 +17,31 @@ def objective_function(x):
 # print (objective_function(1))
 
 def bisection_method():
-    lipschitz_constant = 0.05
+    lipschitz_constant = 0.0005
 
     interval = [0, 10]
     left_bound = interval[0]
     right_bound = interval[1]
     interval_length = right_bound - left_bound
 
+    print("Interval:", [left_bound, right_bound])
+    print("Interval length:", interval_length)
+    print("x1:", x1)
+    print("x2:", x2)
+    print("x_middle:", x_middle)
+    print("f_x1:", f_x1)
+    print("f_x2:", f_x2)
+    print("f_x_middle:", f_x_middle)
+    print("-------------------------------------------------")
+    print()
+
     iteration = 0
     while (interval_length > lipschitz_constant):
+        print("Current iteration:", iteration)
+        print("Interval:", [left_bound, right_bound])
+        print("Interval length:", interval_length)
+        
+
         x_middle = (left_bound + right_bound) / 2
         x1 = left_bound + interval_length / 4
         x2 = right_bound - interval_length / 4
@@ -44,9 +60,6 @@ def bisection_method():
             left_bound = x1
             right_bound = x2
 
-        print("Current iteration:", iteration)
-        print("Interval:", [left_bound, right_bound])
-        print("Interval length:", interval_length)
         print("x1:", x1)
         print("x2:", x2)
         print("x_middle:", x_middle)
