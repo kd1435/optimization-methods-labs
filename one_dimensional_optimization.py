@@ -15,22 +15,13 @@ from matplotlib import *
 from dataclasses import dataclass
 
 @dataclass
-class bisection_variables:
-    def __init__(self, interval):
-        self.left_bound = interval[0]
-        self.right_bound = interval[1]
-        self.interval_length = self.right_bound - self.left_bound
-        self.x1 = self.left_bound + self.interval_length / 4
-        self.x_middle = (self.left_bound + self.right_bound) / 2
-        self.f_x1 = 0
-        self.f_x_middle = 0
-        self.f_x2 = 0
+class BisectionResult:
+    x1 : float
+    x_middle : float 
+    x2 : float
 
-    def (self, )
-        
-   
+    x_min 
     
-
 def objective_function(x):
     return (x**2 - 5)**2 / 4
 
@@ -59,6 +50,15 @@ def bisection_method():
     iteration = 0
     objective_function_calls = 0
     while (interval_length > lipschitz_constant):
+        left_bound = interval[0]
+        right_bound = interval[1]
+        interval_length = right_bound - left_bound
+        x1 = left_bound + interval_length / 4
+        x_middle = (left_bound + right_bound) / 2
+        f_x1 = 0
+        f_x_middle = 0
+        f_x2 = 0
+
         print("Current iteration:", iteration)
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
