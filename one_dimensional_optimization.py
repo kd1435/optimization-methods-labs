@@ -17,9 +17,9 @@ def objective_function(x):
 # print (objective_function(1))
 
 def bisection_method():
-    lipschitz_constant = 0.0005
+    lipschitz_constant = 10**-4 # based on assignment instructions
+    interval = [0, 10] # based on assignment instructions
 
-    interval = [0, 10]
     left_bound = interval[0]
     right_bound = interval[1]
     interval_length = right_bound - left_bound
@@ -35,7 +35,8 @@ def bisection_method():
     print("-------------------------------------------------")
     print()
 
-    # TODO: Optimize the while loop, minimize the amount of calls to objective_function
+    # TODO: Optimize the while loop, so that objective function calls are only done when needed
+    # and the points x1/x_middle/x2 are only calculated when needed (re-assigned otherwise)
 
     iteration = 0
     objective_function_calls = 0
@@ -47,16 +48,18 @@ def bisection_method():
 
         x_middle = (left_bound + right_bound) / 2
         x1 = left_bound + interval_length / 4
-        x2 = right_bound - interval_length / 4
+        
 
         f_x1 = objective_function(x1)
-        f_x2 = objective_function(x2)
         f_x_middle = objective_function(x_middle)
 
         if (f_x1 < f_x_middle):
             right_bound = x_middle
+        else: 
+            x2 = right_bound - interval_length / 4
+            f_x2 = objective_function(x2)
 
-        elif (f_x2 < f_x_middle):
+        if (f_x2 < f_x_middle):
             left_bound = x_middle
 
         else:
