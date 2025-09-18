@@ -11,7 +11,7 @@
 
 """
 
-from matplotlib import *
+from matplotlib import mathtext as mt
 from dataclasses import dataclass
 
 @dataclass
@@ -20,29 +20,26 @@ class BisectionResult:
     x_middle : float 
     x2 : float
 
-    x_min 
+    interval_length : list[int]
     
 def objective_function(x):
     return (x**2 - 5)**2 / 4
 
 # print (objective_function(1))
 
-def bisection_method():
-    lipschitz_constant = 10**-4 # based on assignment instructions
-    interval = [0, 10] # based on assignment instructions
+def bisection_method(interval = [0, 10], tolerance_lipschitz_constant = 10**-4):
+    cache = {} # dictionary memoization (?) to not call objective function redundantly
 
-    variables = bisection_variables(interval)
+    left_bound = interval[0]
+    right_bound = interval[1]
+    interval_length = right_bound - left_bound
 
+    x1 = left_bound + interval_length / 4
+    x_middle = (left_bound + right_bound) / 2
+
+    print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
-    print("x1:", x1)
-    print("x2:", x2)
-    print("x_middle:", x_middle)
-    print("f_x1:", f_x1)
-    print("f_x2:", f_x2)
-    print("f_x_middle:", f_x_middle)
-    print("-------------------------------------------------")
-    print()
 
     # TODO: Optimize the while loop, so that objective function calls are only done when needed
     # and the points x1/x_middle/x2 are only calculated when needed (re-assigned otherwise)
