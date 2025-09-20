@@ -13,16 +13,15 @@
 
 # TODO: Properly import matplotlib
 # from matplotlib import mathtext as mt
-from dataclasses import dataclass
+# from dataclasses import dataclass
 
 # TODO: Use Dataclass later
-@dataclass
-class BisectionResult:
-    x1 : float
-    x_middle : float 
-    x2 : float
-
-    interval_length : list[int]
+# @dataclass
+# class BisectionResult:
+#     x1 : float
+#     x_middle : float 
+#     x2 : float
+#     interval_length : list[int]
     
 def objective_function(x):
     return (x**2 - 5)**2 / 4
@@ -30,7 +29,7 @@ def objective_function(x):
 # print (objective_function(1))
 
 def bisection_method(interval = [0, 10], tolerance_lipschitz_constant = 10**-4):
-    cache = {} # dictionary memoization (?) to not call objective function redundantly
+    # cache = {} # dictionary memoization (?) to not call objective function redundantly
 
     left_bound = interval[0]
     right_bound = interval[1]
@@ -42,35 +41,36 @@ def bisection_method(interval = [0, 10], tolerance_lipschitz_constant = 10**-4):
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
+    print("-------------------------------------------------")
 
     # TODO: Optimize the while loop, so that objective function calls are only done when needed
     # and the points x1/x_middle/x2 are only calculated when needed (re-assigned otherwise)
 
     iteration = 0
     objective_function_calls = 0
-    while (interval_length > lipschitz_constant):
+    
+    while (interval_length > tolerance_lipschitz_constant):
         left_bound = interval[0]
         right_bound = interval[1]
         interval_length = right_bound - left_bound
         x1 = left_bound + interval_length / 4
         x_middle = (left_bound + right_bound) / 2
-        f_x1 = 0
-        f_x_middle = 0
-        f_x2 = 0
 
         print("Current iteration:", iteration)
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
         
-        
+        f_x1 = objective_function(x1)
+        f_x_middle = objective_function(x_middle)
 
-        if (variables.f_x1 < variables.f_x_middle):
+        if (f_x1 < f_x_middle):
             right_bound = x_middle
         else: 
             x2 = right_bound - interval_length / 4
             f_x2 = objective_function(x2)
 
         if (f_x2 < f_x_middle):
+
             left_bound = x_middle
 
         else:
