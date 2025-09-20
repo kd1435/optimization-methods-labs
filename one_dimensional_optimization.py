@@ -11,9 +11,11 @@
 
 """
 
-from matplotlib import mathtext as mt
+# TODO: Properly import matplotlib
+# from matplotlib import mathtext as mt
 from dataclasses import dataclass
 
+# TODO: Use Dataclass later
 @dataclass
 class BisectionResult:
     x1 : float
