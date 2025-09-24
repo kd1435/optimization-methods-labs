@@ -12,7 +12,7 @@
 """
 
 from math import sqrt
-# from typing import Any
+import sympy
 
 # TODO: Properly import matplotlib
 # from matplotlib import mathtext as mt
@@ -30,9 +30,32 @@ class ObjectiveFunction:
     def __init__(self) -> None:
         self.calls = 0
 
+        self.x: sympy.Symbol = sympy.symbols('x')
+        self.expr: sympy.Expr = (self.x**2 - 5)**2 / 4 # type: ignore
+
+        self.expr_prime: sympy.Expr = sympy.diff(self.expr, self.x)
+        self.expr_double_prime: sympy.Expr = sympy.diff(self.expr, self.x, 2)
+
+        self.f = sympy.lambdify(self.x, self.expr, 'numpy')
+        self.df = sympy.lambdify(self.x, self.expr_prime, 'numpy')
+        self.ddf = sympy.lambdify(self.x, self.expr_double_prime, 'numpy')
+
     def __call__(self, x: float) -> float:
         self.calls += 1
-        return (x**2 - 5)**2 / 4
+        return self.f(x)
+    
+    def first_derivative(self, x:float) -> float:
+        self.calls += 1
+        return self.df(x)
+    
+    def second_derivative(self, x:float) -> float:
+        self.calls += 1
+        return self.ddf(x)
+    
+    def print_symbolic(self):
+        print("f(x) =", self.expr)
+        print("f'(x) =", self.expr_prime)
+        print("f''(x) =", self.expr_double_prime)
     
     def reset(self):
         self.calls = 0
@@ -196,6 +219,7 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
 
 # TODO: Newton optimization method function definition
 # Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
+
 def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4, x_i: float = 5):
     objective_function.reset()
     left_bound: float = interval[0]
@@ -228,10 +252,13 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     # TODO: Print objective function?
 
 f1 = ObjectiveFunction()
+# f1.print_symbolic()
 # bisection_method(f1)
 
+# If I wanted to adjust the objective function:
 # f2 = ObjectiveFunction()
 # f2.__call__ = lambda x: (x - 3)**2 + 2  # different function
 # bisection_method(f2)
 
 # golden_section_method(f1)
+
