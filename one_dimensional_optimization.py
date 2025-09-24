@@ -195,6 +195,37 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
     # TODO: Print objective function?
 
 # TODO: Newton optimization method function definition
+# Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
+def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4, x_i: float = 5):
+    objective_function.reset()
+    left_bound: float = interval[0]
+    right_bound: float = interval[1]
+    interval_length: float = right_bound - left_bound # 1.
+    
+    print("Before initiating the method")
+    print("Interval:", [left_bound, right_bound])
+    print("Interval length:", interval_length)
+    print("-------------------------------------------------")
+    print()
+
+    iteration: int = 0
+
+    x_iplus1: float | None = None
+    
+    while interval_length > tolerance_lipschitz_constant:
+        print("Current iteration:", iteration)
+        print("Interval:", [left_bound, right_bound])
+        print("Interval length:", interval_length)
+        print()
+        
+        interval_length = right_bound - left_bound # 2.1 / 3.1
+        print_variables(
+        )
+        
+        iteration += 1
+
+    # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
+    # TODO: Print objective function?
 
 f1 = ObjectiveFunction()
 # bisection_method(f1)
