@@ -136,7 +136,6 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
     # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
     # TODO: Print objective function?
 
-# TODO: Golden Section method function definition
 def golden_section_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
     objective_function.reset()
     left_bound: float = interval[0]
@@ -159,36 +158,37 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
     f_x2: float = objective_function(x2) # 1.
     
     while interval_length > tolerance_lipschitz_constant:
-        interval_length = right_bound - left_bound
-        
         print("Current iteration:", iteration)
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
         print()
         
-        if f_x2 < f_x1: # 2. x_middle becomes x_1
+        if f_x2 < f_x1: # 2.
             # f_min = f_x1
             left_bound = x1 # 2.1 remove interval [left_bound; x1)
             x1 = x2 # 2.2
             x2 = left_bound + tau * interval_length # 2.3
             f_x2 = objective_function(x2) # 2.3
 
-        else:
+        else: # 3.
             # f_min = f_x1
             right_bound = x2 # 3.1 remove interval (x2; right_bound]
             x2 = x1 # 3.2
             x2 = left_bound + tau * interval_length # 3.3
             f_x2 = objective_function(x2) # 3.3
 
+        interval_length = right_bound - left_bound # 2.1 / 3.1
+
         print("objective_function_calls:", objective_function.calls)
         print_variables(
             # f_min=f_min,
+            interval_length=interval_length,
             x1=x1,
             x2=x2,
             f_x1=f_x1,
             f_x2=f_x2
         )
-        interval_length = right_bound - left_bound # 2.1 / 3.1
+        
         iteration += 1
 
     # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
@@ -203,6 +203,4 @@ f1 = ObjectiveFunction()
 # f2.__call__ = lambda x: (x - 3)**2 + 2  # different function
 # bisection_method(f2)
 
-# bisection_method()
-
-golden_section_method(f1)
+# golden_section_method(f1)
