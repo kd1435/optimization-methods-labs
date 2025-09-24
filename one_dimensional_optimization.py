@@ -11,6 +11,9 @@
 
 """
 
+from math import sqrt
+# from typing import Any
+
 # TODO: Properly import matplotlib
 # from matplotlib import mathtext as mt
 # from dataclasses import dataclass
@@ -23,9 +26,16 @@
 #     x2 : float
 #     interval_length : list[int]
 
-def objective_function(x: float, objective_function_calls: int = 0):
-    objective_function_calls += 1
-    return (x**2 - 5)**2 / 4
+class ObjectiveFunction:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def __call__(self, x: float) -> float:
+        self.calls += 1
+        return (x**2 - 5)**2 / 4
+    
+    def reset(self):
+        self.calls = 0
 
 def print_variables(**kwargs):
     for name, value in kwargs.items():
@@ -33,7 +43,8 @@ def print_variables(**kwargs):
     print("-------------------------------------------------")
     print()
 
-def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+    objective_function.reset()
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
@@ -52,7 +63,7 @@ def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_co
     x_middle: float = (left_bound + right_bound) / 2 # 1.
     x1: float | None = None
     x2: float | None = None
-    f_x_middle: float = objective_function(x_middle, objective_function_calls) # 1.
+    f_x_middle: float = objective_function(x_middle) # 1.
     f_x1: float | None = None
     f_x2: float | None = None
     
@@ -65,7 +76,7 @@ def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_co
         print()
             
         x1 = left_bound + interval_length / 4 # 2.
-        f_x1 = objective_function(x1, objective_function_calls) # 2.
+        f_x1 = objective_function(x1) # 2.
         
         if f_x1 < f_x_middle: # 3. x_middle becomes x_1
             # f_min = f_x1
@@ -88,7 +99,7 @@ def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_co
 
         else: # 2.
             x2 = right_bound - interval_length / 4 # 2.
-            f_x2 = objective_function(x2, objective_function_calls) # 2.
+            f_x2 = objective_function(x2) # 2.
         if f_x2 < f_x_middle: # 4. x_middle becomes x_2
             # f_min = f_x2
             left_bound = x_middle # 4.1 
@@ -111,7 +122,7 @@ def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_co
 
         print_variables(
             # f_min=f_min,
-            objective_function_calls=objective_function_calls,
+            objective_function_calls=objective_function.calls,
             x1=x1,
             x_middle=x_middle,
             x2=x2,
@@ -126,11 +137,12 @@ def bisection_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_co
     # TODO: Print objective function?
 
 # TODO: Golden Section method function definition
-def golden_section_method(interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+def golden_section_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+    objective_function.reset()
     left_bound: float = interval[0]
     right_bound: float = interval[1]
-    interval_length: float = right_bound - left_bound
-
+    interval_length: float = right_bound - left_bound # 1.
+    
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
@@ -138,16 +150,13 @@ def golden_section_method(interval: tuple[int, int] = (0, 10), tolerance_lipschi
     print()
 
     iteration: int = 0
-    objective_function_calls: int = 0
     # Do I even need f_min ? 
     # f_min: float | None = None 
-
-    x_middle: float = (left_bound + right_bound) / 2 # 1.
-    x1: float | None = None
-    x2: float | None = None
-    f_x_middle: float = objective_function(x_middle, objective_function_calls) # 1.
-    f_x1: float | None = None
-    f_x2: float | None = None
+    tau: float = (-1 + sqrt(5)) / 2
+    x1: float = (right_bound - tau * interval_length) / 2 # 1.
+    x2: float = (left_bound + tau * interval_length) / 2 # 1.
+    f_x1: float = objective_function(x1) # 1.
+    f_x2: float = objective_function(x2) # 1.
     
     while interval_length > tolerance_lipschitz_constant:
         interval_length = right_bound - left_bound
@@ -156,63 +165,30 @@ def golden_section_method(interval: tuple[int, int] = (0, 10), tolerance_lipschi
         print("Interval:", [left_bound, right_bound])
         print("Interval length:", interval_length)
         print()
-            
-        x1 = left_bound + interval_length / 4 # 2.
-        f_x1 = objective_function(x1, objective_function_calls) # 2.
         
-        if f_x1 < f_x_middle: # 3. x_middle becomes x_1
+        if f_x2 < f_x1: # 2. x_middle becomes x_1
             # f_min = f_x1
-            right_bound = x_middle # 3.1
-            x_middle = x1 # 3.2
-            f_x_middle = f_x1 # 3.2
-            print_variables(
-                # f_min=f_min,
-                objective_function_calls=objective_function_calls,
-                x1=x1,
-                x_middle=x_middle,
-                x2=x2,
-                f_x1=f_x1,
-                f_x_middle=f_x_middle,
-                f_x2=f_x2
-            )
-            interval_length = right_bound - left_bound
-            iteration += 1
-            continue # 6. is while loop condition
+            left_bound = x1 # 2.1 remove interval [left_bound; x1)
+            x1 = x2 # 2.2
+            x2 = left_bound + tau * interval_length # 2.3
+            f_x2 = objective_function(x2) # 2.3
 
-        else: # 2.
-            x2 = right_bound - interval_length / 4 # 2.
-            f_x2 = objective_function(x2, objective_function_calls) # 2.
-        if f_x2 < f_x_middle: # 4. x_middle becomes x_2
-            # f_min = f_x2
-            left_bound = x_middle # 4.1 
-            x_middle = x2 # 4.2 
-            f_x_middle = x2 # 4.2
-        else: # 5. x_middle stays x_middle
-            x_middle = x_middle
-            left_bound = x1 # 5.1 
-            right_bound = x2 # 5.1
+        else:
+            # f_min = f_x1
+            right_bound = x2 # 3.1 remove interval (x2; right_bound]
+            x2 = x1 # 3.2
+            x2 = left_bound + tau * interval_length # 3.3
+            f_x2 = objective_function(x2) # 3.3
 
-        # print("objective_function_calls", objective_function_calls)
-        # print("x1:", x1)
-        # print("x2:", x2)
-        # print("x_middle:", x_middle)
-        # print("f_x1:", f_x1)
-        # print("f_x2:", f_x2)
-        # print("f_x_middle:", f_x_middle)
-        # print("-------------------------------------------------")
-        # print()
-
+        print("objective_function_calls:", objective_function.calls)
         print_variables(
             # f_min=f_min,
-            objective_function_calls=objective_function_calls,
             x1=x1,
-            x_middle=x_middle,
             x2=x2,
             f_x1=f_x1,
-            f_x_middle=f_x_middle,
             f_x2=f_x2
         )
-        interval_length = right_bound - left_bound
+        interval_length = right_bound - left_bound # 2.1 / 3.1
         iteration += 1
 
     # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
@@ -220,5 +196,13 @@ def golden_section_method(interval: tuple[int, int] = (0, 10), tolerance_lipschi
 
 # TODO: Newton optimization method function definition
 
+f1 = ObjectiveFunction()
+# bisection_method(f1)
+
+# f2 = ObjectiveFunction()
+# f2.__call__ = lambda x: (x - 3)**2 + 2  # different function
+# bisection_method(f2)
+
 # bisection_method()
 
+golden_section_method(f1)
