@@ -80,9 +80,7 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
 
     iteration: int = 0
     objective_function_calls: int = 0
-    # Do I even need f_min ? 
-    # f_min: float | None = None 
-
+    
     x_middle: float = (left_bound + right_bound) / 2 # 1.
     x1: float | None = None
     x2: float | None = None
@@ -102,12 +100,10 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
         f_x1 = objective_function(x1) # 2.
         
         if f_x1 < f_x_middle: # 3. x_middle becomes x_1
-            # f_min = f_x1
             right_bound = x_middle # 3.1
             x_middle = x1 # 3.2
             f_x_middle = f_x1 # 3.2
             print_variables(
-                # f_min=f_min,
                 objective_function_calls=objective_function_calls,
                 x1=x1,
                 x_middle=x_middle,
@@ -144,7 +140,6 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
         # print()
 
         print_variables(
-            # f_min=f_min,
             objective_function_calls=objective_function.calls,
             x1=x1,
             x_middle=x_middle,
@@ -172,8 +167,6 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
     print()
 
     iteration: int = 0
-    # Do I even need f_min ? 
-    # f_min: float | None = None 
     tau: float = (-1 + sqrt(5)) / 2
     x1: float = (right_bound - tau * interval_length) / 2 # 1.
     x2: float = (left_bound + tau * interval_length) / 2 # 1.
@@ -187,14 +180,12 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
         print()
         
         if f_x2 < f_x1: # 2.
-            # f_min = f_x1
             left_bound = x1 # 2.1 remove interval [left_bound; x1)
             x1 = x2 # 2.2
             x2 = left_bound + tau * interval_length # 2.3
             f_x2 = objective_function(x2) # 2.3
 
         else: # 3.
-            # f_min = f_x1
             right_bound = x2 # 3.1 remove interval (x2; right_bound]
             x2 = x1 # 3.2
             x2 = left_bound + tau * interval_length # 3.3
@@ -224,7 +215,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     objective_function.reset()
     left_bound: float = interval[0]
     right_bound: float = interval[1]
-    interval_length: float = right_bound - left_bound # 1.
+    interval_length: float = right_bound - left_bound
     
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
