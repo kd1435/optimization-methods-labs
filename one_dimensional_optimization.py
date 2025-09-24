@@ -224,7 +224,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         
         iteration += 1
 
-    # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
+    # TODO: Plot objective function, derivative functions, what else..?
     # TODO: Print objective function?
 
 f1 = ObjectiveFunction()
