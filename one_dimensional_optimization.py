@@ -12,11 +12,9 @@
 """
 
 from math import sqrt
+from numpy import abs
 import sympy
-
-# TODO: Properly import matplotlib
-# from matplotlib import mathtext as mt
-# from dataclasses import dataclass
+import matplotlib.pyplot as plt
 
 # TODO: Use Dataclass later?
 # @dataclass
@@ -66,8 +64,13 @@ def print_variables(**kwargs):
     print("-------------------------------------------------")
     print()
 
-def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+def bisection_method(
+        objective_function: ObjectiveFunction, 
+        interval: tuple[int, int] = (0, 10), 
+        tolerance_lipschitz_constant: float = 10**-4):
+    
     objective_function.reset()
+    f = objective_function.__call__
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
@@ -79,12 +82,11 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
     print()
 
     iteration: int = 0
-    objective_function_calls: int = 0
-    
+
     x_middle: float = (left_bound + right_bound) / 2 # 1.
     x1: float | None = None
     x2: float | None = None
-    f_x_middle: float = objective_function(x_middle) # 1.
+    f_x_middle: float = f(x_middle) # 1.
     f_x1: float | None = None
     f_x2: float | None = None
     
@@ -97,14 +99,14 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
         print()
             
         x1 = left_bound + interval_length / 4 # 2.
-        f_x1 = objective_function(x1) # 2.
+        f_x1 = f(x1) # 2.
         
         if f_x1 < f_x_middle: # 3. x_middle becomes x_1
             right_bound = x_middle # 3.1
             x_middle = x1 # 3.2
             f_x_middle = f_x1 # 3.2
             print_variables(
-                objective_function_calls=objective_function_calls,
+                objective_function_calls=objective_function.calls,
                 x1=x1,
                 x_middle=x_middle,
                 x2=x2,
@@ -118,7 +120,7 @@ def bisection_method(objective_function: ObjectiveFunction, interval: tuple[int,
 
         else: # 2.
             x2 = right_bound - interval_length / 4 # 2.
-            f_x2 = objective_function(x2) # 2.
+            f_x2 = f(x2) # 2.
         if f_x2 < f_x_middle: # 4. x_middle becomes x_2
             # f_min = f_x2
             left_bound = x_middle # 4.1 
@@ -165,13 +167,14 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
     print("Interval length:", interval_length)
     print("-------------------------------------------------")
     print()
-
-    iteration: int = 0
+    
     tau: float = (-1 + sqrt(5)) / 2
     x1: float = (right_bound - tau * interval_length) / 2 # 1.
     x2: float = (left_bound + tau * interval_length) / 2 # 1.
     f_x1: float = objective_function(x1) # 1.
     f_x2: float = objective_function(x2) # 1.
+
+    iteration: int = 0
     
     while interval_length > tolerance_lipschitz_constant:
         print("Current iteration:", iteration)
@@ -213,6 +216,8 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
 
 def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4, x_i: float = 5):
     objective_function.reset()
+    df = objective_function.first_derivative
+    ddf = objective_function.second_derivative
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
@@ -224,17 +229,21 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     print()
 
     iteration: int = 0
+    step_size: float | None = None
 
     x_iplus1: float | None = None
     
-    while interval_length > tolerance_lipschitz_constant:
+    while step_size > tolerance_lipschitz_constant:
         print("Current iteration:", iteration)
-        print("Interval:", [left_bound, right_bound])
-        print("Interval length:", interval_length)
         print()
+
+        x_iplus1 = x_i - (df(x_i) / ddf(x_i))
+        x_i = x_iplus1 
+        step_size = abs(x_i - x_iplus1)
         
-        interval_length = right_bound - left_bound # 2.1 / 3.1
         print_variables(
+            x_i=x_i,
+            x_iplus1=x_iplus1
         )
         
         iteration += 1
@@ -243,13 +252,12 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     # TODO: Print objective function?
 
 f1 = ObjectiveFunction()
-# f1.print_symbolic()
+f1.print_symbolic()
+
 # bisection_method(f1)
+# golden_section_method(f1)
 
 # If I wanted to adjust the objective function:
 # f2 = ObjectiveFunction()
 # f2.__call__ = lambda x: (x - 3)**2 + 2  # different function
 # bisection_method(f2)
-
-# golden_section_method(f1)
-
