@@ -13,6 +13,7 @@
 
 from math import sqrt
 from numpy import abs
+import numpy as np
 import sympy
 import matplotlib.pyplot as plt
 
@@ -71,10 +72,14 @@ def bisection_method(
     
     objective_function.reset()
     f = objective_function.__call__
+
+    # plot_x = np.linspace(0, 10, 100)
+    # plot_y = np.
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
 
+    print("BISECTION OPTIMIZATION METHOD")
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
@@ -156,23 +161,34 @@ def bisection_method(
     # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
     # TODO: Print objective function?
 
-def golden_section_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4):
+def golden_section_method(
+        objective_function: ObjectiveFunction, 
+        interval: tuple[int, int] = (0, 10), 
+        tolerance_lipschitz_constant: float = 10**-4):
     objective_function.reset()
+    f = objective_function.__call__
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound # 1.
     
+    
+    
+    tau: float = (-1 + sqrt(5)) / 2
+    x1: float = right_bound - tau * interval_length # 1.
+    x2: float = left_bound + tau * interval_length # 1.
+    f_x1: float = f(x1) # 1.
+    f_x2: float = f(x2) # 1.
+
+    print("GOLDEN SECTION OPTIMIZATION METHOD")
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
+    print("x1:", x1)
+    print("x2:", x2)
+    print("f_x1:", f_x1)
+    print("f_x2:", f_x2)
     print("-------------------------------------------------")
     print()
-    
-    tau: float = (-1 + sqrt(5)) / 2
-    x1: float = (right_bound - tau * interval_length) / 2 # 1.
-    x2: float = (left_bound + tau * interval_length) / 2 # 1.
-    f_x1: float = objective_function(x1) # 1.
-    f_x2: float = objective_function(x2) # 1.
 
     iteration: int = 0
     
@@ -184,21 +200,24 @@ def golden_section_method(objective_function: ObjectiveFunction, interval: tuple
         
         if f_x2 < f_x1: # 2.
             left_bound = x1 # 2.1 remove interval [left_bound; x1)
+            interval_length = right_bound - left_bound # 2.1 / 3.1
             x1 = x2 # 2.2
+            f_x1 = f_x2
             x2 = left_bound + tau * interval_length # 2.3
-            f_x2 = objective_function(x2) # 2.3
-
+            f_x2 = f(x2) # 2.3
         else: # 3.
             right_bound = x2 # 3.1 remove interval (x2; right_bound]
+            interval_length = right_bound - left_bound # 2.1 / 3.1
             x2 = x1 # 3.2
-            x2 = left_bound + tau * interval_length # 3.3
-            f_x2 = objective_function(x2) # 3.3
-
-        interval_length = right_bound - left_bound # 2.1 / 3.1
+            f_x2 = f_x1
+            x1 = right_bound - tau * interval_length # 3.3
+            f_x1 = f(x1) # 3.3
 
         print("objective_function_calls:", objective_function.calls)
         print_variables(
             # f_min=f_min,
+            left_bound=left_bound,
+            right_bound=right_bound,
             interval_length=interval_length,
             x1=x1,
             x2=x2,
@@ -222,6 +241,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
     
+    print("NEWTON OPTIMIZATION METHOD")
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
     print("Interval length:", interval_length)
@@ -229,7 +249,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
     print()
 
     iteration: int = 0
-    step_size: float | None = None
+    step_size: float = interval_length
 
     x_iplus1: float | None = None
     
@@ -238,13 +258,16 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         print()
 
         x_iplus1 = x_i - (df(x_i) / ddf(x_i))
-        x_i = x_iplus1 
         step_size = abs(x_i - x_iplus1)
         
         print_variables(
             x_i=x_i,
-            x_iplus1=x_iplus1
+            x_iplus1=x_iplus1,
+            step_size=step_size,
+            objective_function_calls=objective_function.calls
         )
+
+        x_i = x_iplus1 
         
         iteration += 1
 
@@ -254,8 +277,9 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
 f1 = ObjectiveFunction()
 f1.print_symbolic()
 
-# bisection_method(f1)
-# golden_section_method(f1)
+bisection_method(f1)
+golden_section_method(f1)
+newton_method(f1)
 
 # If I wanted to adjust the objective function:
 # f2 = ObjectiveFunction()
