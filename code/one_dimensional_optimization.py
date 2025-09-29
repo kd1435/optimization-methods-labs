@@ -16,13 +16,7 @@ import numpy
 import sympy
 import matplotlib.pyplot as plt
 
-# TODO: Use Dataclass later?
-# @dataclass
-# class BisectionResult:
-#     x1 : float
-#     x_middle : float 
-#     x2 : float
-#     interval_length : list[int]
+# TODO: Plot after finishing optimization algorithm with each method
 
 class ObjectiveFunction:
     def __init__(self) -> None:
@@ -72,8 +66,6 @@ def bisection_method(
     objective_function.reset()
     f = objective_function.__call__
 
-    # plot_x = np.linspace(0, 10, 100)
-    # plot_y = np.
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
@@ -134,17 +126,7 @@ def bisection_method(
             x_middle = x_middle
             left_bound = x1 # 5.1 
             right_bound = x2 # 5.1
-
-        # print("objective_function_calls", objective_function_calls)
-        # print("x1:", x1)
-        # print("x2:", x2)
-        # print("x_middle:", x_middle)
-        # print("f_x1:", f_x1)
-        # print("f_x2:", f_x2)
-        # print("f_x_middle:", f_x_middle)
-        # print("-------------------------------------------------")
-        # print()
-
+            
         print_variables(
             objective_function_calls=objective_function.calls,
             x1=x1,
@@ -157,9 +139,6 @@ def bisection_method(
         interval_length = right_bound - left_bound
         iteration += 1
 
-    # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
-    # TODO: Print objective function?
-
 def golden_section_method(
         objective_function: ObjectiveFunction, 
         interval: tuple[int, int] = (0, 10), 
@@ -169,8 +148,6 @@ def golden_section_method(
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound # 1.
-    
-    
     
     tau: float = (-1 + sqrt(5)) / 2
     x1: float = right_bound - tau * interval_length # 1.
@@ -214,7 +191,6 @@ def golden_section_method(
 
         print("objective_function_calls:", objective_function.calls)
         print_variables(
-            # f_min=f_min,
             left_bound=left_bound,
             right_bound=right_bound,
             interval_length=interval_length,
@@ -226,12 +202,7 @@ def golden_section_method(
         
         iteration += 1
 
-    # TODO: Plot before and after, or with each operation, the graph of the function, each of the points, interval...
-    # TODO: Print objective function?
-
-# TODO: Newton optimization method function definition
 # Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
-
 def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4, x_i: float = 5):
     objective_function.reset()
     df = objective_function.first_derivative
@@ -270,17 +241,9 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         
         iteration += 1
 
-    # TODO: Plot objective function, derivative functions, what else..?
-    # TODO: Print objective function?
-
 f1 = ObjectiveFunction()
 f1.print_symbolic()
 
 bisection_method(f1)
 golden_section_method(f1)
 newton_method(f1)
-
-# If I wanted to adjust the objective function:
-# f2 = ObjectiveFunction()
-# f2.__call__ = lambda x: (x - 3)**2 + 2  # different function
-# bisection_method(f2)
