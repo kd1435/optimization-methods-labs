@@ -12,8 +12,7 @@
 """
 
 from math import sqrt
-from numpy import abs
-import numpy as np
+import numpy
 import sympy
 import matplotlib.pyplot as plt
 
@@ -258,7 +257,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         print()
 
         x_iplus1 = x_i - (df(x_i) / ddf(x_i))
-        step_size = abs(x_i - x_iplus1)
+        step_size = numpy.abs(x_i - x_iplus1)
         
         print_variables(
             x_i=x_i,
