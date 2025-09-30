@@ -1,3 +1,8 @@
+from math import sqrt
+import numpy as np
+import sympy as sp
+import matplotlib.pyplot as plt
+
 """
 1. Suprogramuokite vienmačio optimizavimo intervalo dalijimo pusiau, auksinio pjūvio ir Niutono metodo algoritmus.
 
@@ -8,29 +13,26 @@
 4. Palyginkite rezultatus: gauti sprendiniai, rastas funkcijos minimumo įvertis, atliktų žingsnių ir funkcijų skaičiavimų skaičius.
 
 5. Vizualizuokite tikslo funkciją ir bandymo taškus.
-
 """
 
-from math import sqrt
-import numpy
-import sympy
-import matplotlib.pyplot as plt
-
-# TODO: Plot after finishing optimization algorithm with each method
+""" 
+Let’s say your final interval is [a, b].
+You can pick the midpoint as the “approximate minimum” 
+"""
 
 class ObjectiveFunction:
     def __init__(self) -> None:
         self.calls = 0
 
-        self.x: sympy.Symbol = sympy.symbols('x')
-        self.expr: sympy.Expr = (self.x**2 - 5)**2 / 4 # type: ignore
+        self.x: sp.Symbol = sp.symbols('x')
+        self.expr: sp.Expr = (self.x**2 - 5)**2 / 4 # type: ignore
 
-        self.expr_prime: sympy.Expr = sympy.diff(self.expr, self.x)
-        self.expr_double_prime: sympy.Expr = sympy.diff(self.expr, self.x, 2)
+        self.expr_prime: sp.Expr = sp.diff(self.expr, self.x)
+        self.expr_double_prime: sp.Expr = sp.diff(self.expr, self.x, 2)
 
-        self.f = sympy.lambdify(self.x, self.expr, 'numpy')
-        self.df = sympy.lambdify(self.x, self.expr_prime, 'numpy')
-        self.ddf = sympy.lambdify(self.x, self.expr_double_prime, 'numpy')
+        self.f = sp.lambdify(self.x, self.expr, 'numpy')
+        self.df = sp.lambdify(self.x, self.expr_prime, 'numpy')
+        self.ddf = sp.lambdify(self.x, self.expr_double_prime, 'numpy')
 
     def __call__(self, x: float) -> float:
         self.calls += 1
@@ -61,15 +63,16 @@ def print_variables(**kwargs):
 def bisection_method(
         objective_function: ObjectiveFunction, 
         interval: tuple[int, int] = (0, 10), 
-        tolerance_lipschitz_constant: float = 10**-4):
+        tolerance_lipschitz_constant: float = 10**-4) -> tuple[float, list[float]]:
     
-    objective_function.reset()
-    f = objective_function.__call__
-
+    # Points kept for plotting later
+    x_min: float | None = None
+    xs: list[float] = []
+    
     left_bound: float = interval[0]
     right_bound: float = interval[1]
     interval_length: float = right_bound - left_bound
-
+    
     print("BISECTION OPTIMIZATION METHOD")
     print("Before initiating the method")
     print("Interval:", [left_bound, right_bound])
@@ -77,7 +80,8 @@ def bisection_method(
     print("-------------------------------------------------")
     print()
 
-    iteration: int = 0
+    objective_function.reset()
+    f = objective_function.__call__
 
     x_middle: float = (left_bound + right_bound) / 2 # 1.
     x1: float | None = None
@@ -85,7 +89,8 @@ def bisection_method(
     f_x_middle: float = f(x_middle) # 1.
     f_x1: float | None = None
     f_x2: float | None = None
-    
+
+    iteration: int = 0
     while interval_length > tolerance_lipschitz_constant:
         interval_length = right_bound - left_bound
         
@@ -96,8 +101,12 @@ def bisection_method(
             
         x1 = left_bound + interval_length / 4 # 2.
         f_x1 = f(x1) # 2.
+
+        xs.append(x1)
+        xs.append(x_middle)
         
         if f_x1 < f_x_middle: # 3. x_middle becomes x_1
+            x_min = (x1 + x_middle) / 2
             right_bound = x_middle # 3.1
             x_middle = x1 # 3.2
             f_x_middle = f_x1 # 3.2
@@ -117,12 +126,14 @@ def bisection_method(
         else: # 2.
             x2 = right_bound - interval_length / 4 # 2.
             f_x2 = f(x2) # 2.
+            xs.append(x2)
         if f_x2 < f_x_middle: # 4. x_middle becomes x_2
-            # f_min = f_x2
+            x_min = (x2 + x_middle) / 2
             left_bound = x_middle # 4.1 
             x_middle = x2 # 4.2 
             f_x_middle = x2 # 4.2
         else: # 5. x_middle stays x_middle
+            x_min = x_middle
             x_middle = x_middle
             left_bound = x1 # 5.1 
             right_bound = x2 # 5.1
@@ -138,7 +149,9 @@ def bisection_method(
         )
         interval_length = right_bound - left_bound
         iteration += 1
-
+    # Loop end
+    return x_min, xs
+    
 def golden_section_method(
         objective_function: ObjectiveFunction, 
         interval: tuple[int, int] = (0, 10), 
@@ -228,7 +241,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         print()
 
         x_iplus1 = x_i - (df(x_i) / ddf(x_i))
-        step_size = numpy.abs(x_i - x_iplus1)
+        step_size = np.abs(x_i - x_iplus1)
         
         print_variables(
             x_i=x_i,
@@ -240,10 +253,20 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         x_i = x_iplus1 
         
         iteration += 1
+    # Loop end
 
+# TODO: Plot after finishing optimization algorithm with each method
 f1 = ObjectiveFunction()
 f1.print_symbolic()
 
+# Plot just the objective function
+x_vals = np.linspace(0, 10, 400)
+y_vals = f1.f(x_vals)
+plt.plot(x_vals, y_vals, label="f(x)")
+plt.show()
+
 bisection_method(f1)
+
+
 golden_section_method(f1)
 newton_method(f1)
