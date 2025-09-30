@@ -1,37 +1,64 @@
 \documentclass[a4paper,12pt]{article}
-
-% Packages
-\usepackage{amsmath, amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage{float}
 
-\title{Optimization Methods -- Lab 1 Report}
-\author{Kristupas D.}
+\title{Vienmačio optimizavimo metodai}
+\author{Kristupas Dansevičius}
 \date{\today}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
-Briefly explain the problem and algorithm(s) you implemented. Keep it high-level, assume the reader isn’t in the course.
+\section{Įvadas}
+Šiame darbe nagrinėjami trys vienmačio optimizavimo metodai:
+intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas. 
+Tikslas --- rasti funkcijos minimumą:
+\[
+f(x) = \frac{(x^2 - 5)^2}{4}
+\]
 
-\section{Methodology}
-Describe what algorithm you coded (e.g., golden section search, Newton’s method, etc.), how it works, and how you applied it.
+\section{Metodai}
+\subsection{Intervalo dalijimo pusiau metodas}
+Tai tritaškis intervalo dalijimo pusiau metodas, kurio principas yra itin paprastas:
+intervale panaudojami 3 taškai:
+\begin{itemize}
+    \item x_middle - tai vidurinis taškas esantis intervalo viduryje
+    \item x1 - tai viduryje tarp kairiojo intervalo krašto ir vidurinio taško x_middle esantis taškas
+    \item 
+\end{itemize}
 
-\section{Results}
-Insert figures or tables with results. For example:
+\subsection{Auksinio pjūvio metodas}
+Trumpas metodo aprašymas.
 
-\begin{figure}[h]
+\subsection{Niutono metodas}
+Trumpas metodo aprašymas.
+
+\section{Rezultatai}
+Gauti šie rezultatai:
+
+\begin{itemize}
+    \item Bisection: $x_{\min} \approx 2.236$, iteracijų: 17, funkcijos iškvietimų: 28
+    \item Golden Section: $x_{\min} \approx 2.236$, iteracijų: 24, funkcijos iškvietimų: 26
+    \item Newton: $x_{\min} \approx 2.236$, iteracijų: 6, funkcijos iškvietimų: 12
+\end{itemize}
+
+\section{Vizualizacija}
+Žemiau pateikiamos tikslo funkcijos ir taikytų metodų vizualizacijos.
+
+\begin{figure}[H]
     \centering
-%     \includegraphics[width=0.7\textwidth]{convergence.png}
-    \caption{Convergence of algorithm over iterations.}
+    \includegraphics[width=\textwidth]{plot.png}
+    \caption{Funkcijos $f(x)$ optimizavimo vizualizacija.}
 \end{figure}
 
-\section{Discussion}
-Comment on what you observed. Did the algorithm converge fast? Any limitations?
-
-\section{Conclusion}
-Summarize the key takeaway in a few sentences.
+\section{Išvados}
+\begin{itemize}
+    \item Visi metodai rado minimumą ties $x \approx \sqrt{5}$.
+    \item Intervalo metodai reikalauja daugiau iteracijų, bet yra paprastesni.
+    \item Niutono metodas greitesnis, bet priklausomas nuo pradinio taško.
+\end{itemize}
 
 \end{document}
