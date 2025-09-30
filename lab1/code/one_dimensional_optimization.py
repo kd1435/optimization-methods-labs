@@ -216,7 +216,10 @@ def golden_section_method(
         iteration += 1
 
 # Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
-def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, int] = (0, 10), tolerance_lipschitz_constant: float = 10**-4, x_i: float = 5):
+def newton_method(objective_function: ObjectiveFunction, 
+                  interval: tuple[int, int] = (0, 10), 
+                  tolerance_lipschitz_constant: float = 10**-4, 
+                  x_i: float = 5) -> tuple[float, list[float]] :
     objective_function.reset()
     df = objective_function.first_derivative
     ddf = objective_function.second_derivative
@@ -254,6 +257,7 @@ def newton_method(objective_function: ObjectiveFunction, interval: tuple[int, in
         
         iteration += 1
     # Loop end
+    return 0.0, [0.0]
 
 # TODO: Plot after finishing optimization algorithm with each method
 f1 = ObjectiveFunction()
