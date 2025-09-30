@@ -66,7 +66,7 @@ def bisection_method(
         tolerance_lipschitz_constant: float = 10**-4) -> tuple[float, list[float]]:
     
     # Points kept for plotting later
-    x_min: float | None = None
+    x_min: float
     xs: list[float] = []
     
     left_bound: float = interval[0]
@@ -265,8 +265,12 @@ y_vals = f1.f(x_vals)
 plt.plot(x_vals, y_vals, label="f(x)")
 plt.show()
 
-bisection_method(f1)
+xmin_bis: float | None = None
+xs_bis: list[float] = [] 
+xmin_bis, xs_bis = bisection_method(f1)
 
+plt.scatter(xs_bis, [f1.f(x) for x in xs_bis], label="Bisection points")
+plt.show()
 
 golden_section_method(f1)
 newton_method(f1)
