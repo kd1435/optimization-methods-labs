@@ -4,6 +4,8 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
 
 \title{Vienmačio optimizavimo metodai}
 \author{Kristupas Dansevičius}
@@ -12,11 +14,17 @@
 \begin{document}
 
 \maketitle
+\tableofcontents
 
 \section{Įvadas}
+Šis laboratorinis darbas paskirtas optimizavimo metodų kurse Vilniaus Universitete. 
 Šiame darbe nagrinėjami trys vienmačio optimizavimo metodai:
-intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas. 
-Tikslas --- rasti funkcijos minimumą:
+intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas.
+
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
 \[
 f(x) = \frac{(x^2 - 5)^2}{4}
 \]
@@ -54,8 +62,8 @@ Gauti šie rezultatai:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{plot.png}
-    \caption{Funkcijos $f(x)$ optimizavimo vizualizacija.}
+    \includegraphics[width=\textwidth]{figure-1.jpeg}
+    \caption{\label{fig:all}Funkcijos $f(x)$ optimizavimo vizualizacija.}
 \end{figure}
 
 \section{Išvados}
@@ -65,4 +73,6 @@ Gauti šie rezultatai:
     \item Niutono metodas greitesnis, bet priklausomas nuo pradinio taško.
 \end{itemize}
 
+\section{Kodas}
+\lstinputlisting[language=python]{../code/main.py}
 \end{document}
