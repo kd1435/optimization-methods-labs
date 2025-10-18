@@ -257,7 +257,7 @@ __marimo__/
 build/
 
 # Pictures
-.jpg
-.jpeg
-.png
-.bmp
+*.jpg
+*.jpeg
+*.png
+*.bmp
