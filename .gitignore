@@ -255,3 +255,9 @@ __marimo__/
 .bak 
 .mtc
 build/
+
+# Pictures
+.jpg
+.jpeg
+.png
+.bmp
