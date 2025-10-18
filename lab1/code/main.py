@@ -16,11 +16,6 @@ from dataclasses import dataclass, field
 5. Vizualizuokite tikslo funkciją ir bandymo taškus.
 """
 
-""" 
-Let’s say your final interval is [a, b].
-You can pick the midpoint as the “approximate minimum” 
-"""
-
 @dataclass
 class OptimizationResult:
     x_min: float
