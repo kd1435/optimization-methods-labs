@@ -1,5 +1,6 @@
 \documentclass[a4paper,12pt]{article}
-\usepackage[utf8]{inputenc}
+\usepackage[lithuanian]{babel}
+\usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{float}
@@ -25,8 +26,8 @@ f(x) = \frac{(x^2 - 5)^2}{4}
 Tai tritaškis intervalo dalijimo pusiau metodas, kurio principas yra itin paprastas:
 intervale panaudojami 3 taškai:
 \begin{itemize}
-    \item x_middle - tai vidurinis taškas esantis intervalo viduryje
-    \item x1 - tai viduryje tarp kairiojo intervalo krašto ir vidurinio taško x_middle esantis taškas
+    \item $x_{middle}$ - tai vidurinis taškas esantis intervalo viduryje
+    \item $x_1$ - tai viduryje tarp kairiojo intervalo krašto ir vidurinio taško $x_{middle}$ esantis taškas
     \item 
 \end{itemize}
 
@@ -40,9 +41,12 @@ Trumpas metodo aprašymas.
 Gauti šie rezultatai:
 
 \begin{itemize}
-    \item Bisection: $x_{\min} \approx 2.236$, iteracijų: 17, funkcijos iškvietimų: 28
-    \item Golden Section: $x_{\min} \approx 2.236$, iteracijų: 24, funkcijos iškvietimų: 26
-    \item Newton: $x_{\min} \approx 2.236$, iteracijų: 6, funkcijos iškvietimų: 12
+    \item Intervalo dalijimo pusiau metodas: 
+        $x_{\min} \approx 2.236$, iteracijų: 17, funkcijos iškvietimų: 28
+    \item Auksinio pjūvio metodas:
+        $x_{\min} \approx 2.236$, iteracijų: 24, funkcijos iškvietimų: 26
+    \item Niutono metodas:
+        $x_{\min} \approx 2.236$, iteracijų: 6, funkcijos iškvietimų: 12
 \end{itemize}
 
 \section{Vizualizacija}
