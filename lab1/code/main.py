@@ -67,7 +67,8 @@ def print_variables(**kwargs):
 def bisection_method(
         objective_function: ObjectiveFunction, 
         interval: tuple[int, int] = (0, 10), 
-        tolerance_lipschitz_constant: float = 10**-4) -> OptimizationResult:
+        tolerance_lipschitz_constant: float = 10**-4
+        ) -> OptimizationResult:
     
     # Points kept for plotting later
     x_min: float
@@ -240,30 +241,25 @@ def golden_section_method(
     )
 
 # Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
-def newton_method(objective_function: ObjectiveFunction, 
-                  interval: tuple[int, int] = (0, 10), 
-                  tolerance_lipschitz_constant: float = 10**-4, 
-                  x_i: float = 5) -> OptimizationResult:
+def newton_method(objective_function: ObjectiveFunction,
+                  x_0: float = 5,
+                  tolerance_lipschitz_constant: float = 10**-4
+                  ) -> OptimizationResult:
     objective_function.reset()
-    f = objective_function.__call__
     df = objective_function.first_derivative
     ddf = objective_function.second_derivative
-    left_bound: float = interval[0]
-    right_bound: float = interval[1]
-    interval_length: float = right_bound - left_bound
     
     print("NEWTON OPTIMIZATION METHOD")
     print("Before initiating the method")
-    print("Interval:", [left_bound, right_bound])
-    print("Interval length:", interval_length)
     print("-------------------------------------------------")
     print()
 
     xs = []
     tangents = []
     iteration: int = 0
-    step_size: float = interval_length
-
+    step_size: float = tolerance_lipschitz_constant + 1
+    
+    x_i: float = x_0
     x_iplus1: float | None = None
     
     while step_size > tolerance_lipschitz_constant:
