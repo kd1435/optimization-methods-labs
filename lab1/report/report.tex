@@ -17,22 +17,24 @@
 \tableofcontents
 
 \section{Įvadas}
-Šis laboratorinis darbas paskirtas optimizavimo metodų kurse Vilniaus Universitete. 
+Šis laboratorinis darbas atsiskaitomas optimizavimo metodų kurse Vilniaus Universitete. 
 Šiame darbe nagrinėjami trys vienmačio optimizavimo metodai:
-intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas.
+intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas. Paskirta užduotis:
 
 \begin{enumerate}
+    \item Suprogramuoti šiuos metodus
+    \item Aprašyti duotąją \textbf{tikslo funkciją} - tai funkcija, pagal kurią yra optimizuojama naudojant minėtus metodus, t.y., ieškomas jos \textbf{lokalus minimumas}, kuris ir bus ir \textbf{globalusis minimumas}. Taip yra todėl, kad funkcija yra \textbf{iškiloji}: tarp bet kurių dviejų funkcijos taškų nubrėžus liniją, visos funkcijos reikšmės yra žemiau šios linijos. Kitaip pasakius, funkcijoje nėra jokių "duobių", į kurias optimizuojant galima patekti ir "užstrigti", kurios būtų tik lokalūs, bet ne globalūs minimumai".  
+        \begin{equation}
+            f(x) = \frac{(x^2 - 5)^2}{4}
+        \end{equation}
     \item 
 \end{enumerate}
 
-\[
-f(x) = \frac{(x^2 - 5)^2}{4}
-\]
+
 
 \section{Metodai}
 \subsection{Intervalo dalijimo pusiau metodas}
-Tai tritaškis intervalo dalijimo pusiau metodas, kurio principas yra itin paprastas:
-intervale panaudojami 3 taškai:
+Tai tritaškis intervalo dalijimo pusiau metodas (t.y., kiekvienai optimizavimo algoritmo iteracijai naudojami 3 taškai), kurio principas yra itin paprastas. Intervale panaudojami 3 taškai:
 \begin{itemize}
     \item $x_{middle}$ - tai vidurinis taškas esantis intervalo viduryje
     \item $x_1$ - tai viduryje tarp kairiojo intervalo krašto ir vidurinio taško $x_{middle}$ esantis taškas
@@ -62,14 +64,14 @@ Gauti šie rezultatai:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figure-1.jpeg}
+    \includegraphics[width=\textwidth,height=10cm]{figure-1.jpeg}
     \caption{\label{fig:all}Funkcijos $f(x)$ optimizavimo vizualizacija.}
 \end{figure}
 
 \section{Išvados}
 \begin{itemize}
     \item Visi metodai rado minimumą ties $x \approx \sqrt{5}$.
-    \item Intervalo metodai reikalauja daugiau iteracijų ir tikslo funkcijos iškvietimų, bet yra paprastesni.
+    \item Intervalo metodai (intervalo dalijimo pusiau ir auksinio pjūvio) reikalauja daugiau iteracijų ir tikslo funkcijos iškvietimų, bet yra paprastesni.
     \item Šiame darbe auksinio pjūvio pranašumas prieš intervalo dalijimo pusiau optimizavimo metodą pagal tikslo funkcijos kvietimų kiekį neišryškėjo
 \end{itemize}
 
