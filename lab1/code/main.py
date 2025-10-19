@@ -96,7 +96,7 @@ def bisection_method(
     f_x2: float | None = None
 
     iteration: int = 0
-    while interval_length > tolerance_lipschitz_constant:
+    while interval_length > tolerance_lipschitz_constant: # 6
         interval_length = right_bound - left_bound
         
         print("Current iteration:", iteration)
@@ -131,14 +131,14 @@ def bisection_method(
             x2 = right_bound - interval_length / 4 # 2.
             f_x2 = f(x2) # 2.
             xs.append(x2)
-        if f_x2 < f_x_middle: # 4. x_middle becomes x_2
-            left_bound = x_middle # 4.1 
-            x_middle = x2 # 4.2 
-            f_x_middle = x2 # 4.2
-        else: # 5. x_middle stays x_middle
-            x_middle = x_middle
-            left_bound = x1 # 5.1 
-            right_bound = x2 # 5.1
+            if f_x2 < f_x_middle: # 4. x_middle becomes x_2
+                left_bound = x_middle # 4.1 
+                x_middle = x2 # 4.2 
+                f_x_middle = x2 # 4.2
+            else: # 5. x_middle stays x_middle
+                x_middle = x_middle
+                left_bound = x1 # 5.1 
+                right_bound = x2 # 5.1
             
         print_variables(
             objective_function_calls=objective_function.calls,
@@ -165,8 +165,6 @@ def golden_section_method(
         interval: tuple[int, int] = (0, 10), 
         tolerance_lipschitz_constant: float = 10**-4
         ) -> OptimizationResult:
-    
-    
     
     objective_function.reset()
     f = objective_function.__call__
