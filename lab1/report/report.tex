@@ -29,9 +29,7 @@
 \tableofcontents
 
 \section{Įvadas}
-Šis laboratorinis darbas atsiskaitomas optimizavimo metodų kurse Vilniaus Universitete. 
-Šiame darbe nagrinėjami trys vienmačio optimizavimo metodai:
-intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas. 
+Šis laboratorinis darbas atsiskaitomas optimizavimo metodų kurse Vilniaus Universitete. Šiame darbe nagrinėjami trys vienmačio optimizavimo metodai: intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas. Sąvoka \textbf{vienmatis} reiškia, kad kalbama apie optimizavimą vieno kintamojo funkcijų (vienos dimensijos $d$, vieno mato). Optimizavimo uždavinys reiškia minimumo arba maksimumo paiešką pasirenkant įvedamas reikšmes iš leidžiamų reikšmių aibės ir apskaičiuojant išvestį įvedus šias reikšmes į funkciją 
 
 \section{Užduotis}
 1-ojo laboratorinio darbo (iš viso yra 4 per semestrą) užduoties reikalavimai:
@@ -121,7 +119,7 @@ Algoritmo žingsniai:
         \item Intervalo centru \mil{x_middle} ir lieka, atmetama po 0.25 intervalo nuo abiejų kraštų. Reiškia, atmetami intervalai \mil{[left_bound, x1)} ir \mil{(x2, right_bound]} atliekant priskyrimus \mil{left_bound = x1} ir \mil{right_bound = x2}
     \end{enumerate}
     \item Skaičiuojamas \mil{interval_length}, kuris, jei yra pakankamai mažas (mažesnis už 
-    $\epsilon$, t.y., nurodytą tikslumą, kode įvardintą kaip \mil{tolerance_lipschitz_constant}, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į 2 punktą. 
+    $\epsilon$, t.y., nurodytą tikslumą, kode įvardintą kaip \mil{tolerance_lipschitz_constant}, kuris darbo reikalavimuose nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į 2 punktą. 
 \end{enumerate}
 
 Suprogramuotam metode einamoje iteracijoje \mil{x2} ir \mil{f(x2)} neskaičiuojami, kai 3-ame punkte tikrinimo sąlyga grąžina tiesą
@@ -300,17 +298,72 @@ Algoritmo žingsniai:
 \pagebreak
 
 \subsection{Niutono metodas}
+Šis metodas remiasi būtinosiomis minimumo sąlygomis (lokaliame minimume šio taško funkcijos išvestinės reikšmė turi būti lygi 0). Išvestinė lygi 0 reiškia, kad tam taške funkcija nei didėja, nei mažėja (duobė, lokalus minimumas). Todėl minimumo ieškojimo uždavinį galima spręsti ieškant kokiam taškui (taškams) $x$ $f'(x) = 0$
+
+\subsubsection*{Metodo algoritmas}
+Niutono metodas šiaip yra vienas iš būdų spręsti lygčių sistemoms. Turėdami du kartus diferencijuojamą funkciją (duotoji tikslo funkcija tokia yra), galime naudoti išplėstį pagal Teiloro eilutę iki antros eilės, kuria pasinaudojus funkcijai $f$ taške $x$ turėtume:
+\begin{equation*}
+    f'(x) \approx f'(x_i) + f''(x_i) * (x - x_i) 
+\end{equation*}
+Prilyginus išvestinę $f'(x)$ nuliui, gauname iteracinę metodo formulę:
+\begin{equation*}
+    x_{i+1} = x_i - \frac{f'(x_i)}{f''(x_i)}
+\end{equation*}
+
+\pagebreak
+\subsubsection*{Programinis kodas}
+Šio metodo įgyvendinimas programiniam kode čia pateikiamas ``suprastinamas'', be kodo eilučių darančių tarpinių metodo iteracijų reikšmių spausdinimą
+
+\begin{minted}{python}
+# Minimizuokite Niutono metodu nuo x0 = 5 kol žingsnio ilgis didesnis už 10^−4.
+def newton_method(objective_function: ObjectiveFunction,
+                  x_0: float = 5,
+                  tolerance_lipschitz_constant: float = 10**-4
+                  ) -> OptimizationResult:
+    objective_function.reset()
+    df = objective_function.first_derivative
+    ddf = objective_function.second_derivative
+    
+    xs = []
+    tangents = []
+    
+    x_i: float = x_0
+    x_iplus1: float | None = None
+    
+    iteration: int = 0
+    step_size: float = tolerance_lipschitz_constant + 1
+    while step_size > tolerance_lipschitz_constant:
+        slope = df(x_i)
+        tangents.append((x_i, slope))
+        xs.append(x_i)
+
+        # Newton update
+        x_iplus1 = x_i - slope / ddf(x_i)
+        step_size = abs(x_i - x_iplus1)
+        x_i = x_iplus1
+        
+        iteration += 1
+    # Loop end
+    return OptimizationResult(
+        x_min=x_i, 
+        xs=xs, 
+        iterations=iteration, 
+        function_calls=objective_function.calls,
+        tangents=tangents
+    )
+\end{minted}
+\pagebreak
 
 
 \section{Rezultatai}
 Gauti šie rezultatai:
 \begin{itemize}
     \item Intervalo dalijimo pusiau metodas: 
-        $x_{\min} \approx 2.236$, iteracijų: 17, funkcijos iškvietimų: 28
+        $x_{\min} \approx 2.236$, iteracijų: 17, tikslo funkcijos iškvietimų: 28
     \item Auksinio pjūvio metodas:
-        $x_{\min} \approx 2.236$, iteracijų: 24, funkcijos iškvietimų: 26
+        $x_{\min} \approx 2.236$, iteracijų: 24, tikslo funkcijos iškvietimų: 26
     \item Niutono metodas:
-        $x_{\min} \approx 2.236$, iteracijų: 6, funkcijos iškvietimų: 12
+        $x_{\min} \approx 2.236$, iteracijų: 6, tikslo funkcijos iškvietimų: 12
 \end{itemize}
 
 \section{Vizualizacija}
@@ -328,14 +381,14 @@ Gauti šie rezultatai:
 \end{itemize}
 
 \pagebreak
-\section{Kodas}
+\section{Programos kodas}
 \inputminted{python}{../code/main.py}
 \pagebreak
 
 \section{Šaltiniai}
 \begin{enumerate}
     \item Python paketo \mintinline{python}{sympy} oficialaus puslapio 2017-ųjų metų užrašų tipo mokymo programa / tutorial: \url{https://www.sympy.org/scipy-2017-codegen-tutorial/notebooks/22-lambdify.html}
-    \item Simbolinių išraiškų Wikipedia šaltinis:\url{https://en.wikipedia.org/wiki/S-expression}
+    \item Simbolinių išraiškų Wikipedia šaltinis: \url{https://en.wikipedia.org/wiki/S-expression}
     \item Paskaitų skaidrės: ``moodle'' sistemoje pateiktos dėstytojo J. Žilinsko paskaitų skaidrės
 \end{enumerate}
 
