@@ -47,7 +47,7 @@ intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas.
 \end{enumerate}
 
 \section{Tikslo funkcijos aprašymas}
-Pateikiamas programoje aprašytos tikslo funkcijos kodas, naudojantis Python objektinio programavimo galimybėmis, panaudojant \mil{class}. Šioje tikslo funkcijos klasės aprašyme yra sekamas tikslo funkcijos iškvietimų kiekis, iškvietimus vykdant iš suprogramuotų optimizavimų metodų kodo. Pasak \url{https://www.sympy.org/scipy-2017-codegen-tutorial/notebooks/22-lambdify.html}, \textquote{Behind the scenes \mil{lambdify} constructs a string representation of the Python code and uses Python's \mil{eval} function to compile the function.} Klasėje yra saugoma simbolinės išraiškos (\url{https://en.wikipedia.org/wiki/S-expression}) ne tik pačios tikslo funkcijos, bet ir jos pirmos ir antros eilės išvestinių.
+Pateikiamas programoje aprašytos tikslo funkcijos kodas, naudojantis Python objektinio programavimo galimybėmis, panaudojant \mil{class}. Šioje tikslo funkcijos klasės aprašyme yra sekamas tikslo funkcijos iškvietimų kiekis, iškvietimus vykdant iš suprogramuotų optimizavimų metodų kodo. Pasak \url{https://www.sympy.org/scipy-2017-codegen-tutorial/notebooks/22-lambdify.html}, \textquote{Behind the scenes \mil{lambdify} constructs a string representation of the Python code and uses Python's \mil{eval} function to compile the function.} Klasėje yra saugoma simbolinės išraiškos (\url{https://en.wikipedia.org/wiki/S-expression}) ne tik pačios tikslo funkcijos, bet ir jos pirmos ir antros eilės išvestinių (reikalingos su Niutono metodu)
 
 \pagebreak
 \begin{minted}{python}
@@ -121,7 +121,7 @@ Algoritmo žingsniai:
         \item Intervalo centru \mil{x_middle} ir lieka, atmetama po 0.25 intervalo nuo abiejų kraštų. Reiškia, atmetami intervalai \mil{[left_bound, x1)} ir \mil{(x2, right_bound]} atliekant priskyrimus \mil{left_bound = x1} ir \mil{right_bound = x2}
     \end{enumerate}
     \item Skaičiuojamas \mil{interval_length}, kuris, jei yra pakankamai mažas (mažesnis už 
-    $\epsilon$, t.y., nurodytą tikslumą, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į antrą punktą. 
+    $\epsilon$, t.y., nurodytą tikslumą, kode įvardintą kaip \mil{tolerance_lipschitz_constant}, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į 2 punktą. 
 \end{enumerate}
 
 Suprogramuotam metode einamoje iteracijoje \mil{x2} ir \mil{f(x2)} neskaičiuojami, kai 3-ame punkte tikrinimo sąlyga grąžina tiesą
@@ -201,7 +201,7 @@ def bisection_method(
 \pagebreak
 \subsection{Auksinio pjūvio metodas}
 \subsubsection*{Naudojami taškai}
-Šis metodas yra dvitaškis intervalo dalijimo metodas (bet ne pusiau, su viena iteracija atmetama didesnė intervalo dalis nei su intervalo dalijimo pusiau metodu). Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, kiekvienai iteracijai naudojami tik 2 taškai, \mil{x1} ir \mil{x2}. $\tau$ yra Fibonačio skaičius, gaunamas iš lygybės
+Šis metodas yra dvitaškis intervalo dalijimo metodas (bet ne pusiau, su viena iteracija atmetama mažesnė intervalo dalis nei su intervalo dalijimo pusiau metodu). Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, kiekvienai iteracijai naudojami tik 2 taškai, \mil{x1} ir \mil{x2}. $\tau$ (\mil{tau}) yra teigiamas Fibonačio skaičius $\tau = 0.61803\ldots$, gaunamas iš lygybės
 \begin{equation*}
     \frac{1 - \tau}{1} = \frac{\tau - (1 - \tau)}{\tau}
 \end{equation*}
@@ -214,7 +214,26 @@ def bisection_method(
 \subsubsection*{Metodo algoritmas}
 Algoritmo žingsniai:
 \begin{enumerate}
-    \item Paskaičiuojamas intervalo ilgis \mil{interval_length}, taškai \mil{x1 = }
+    \item Paskaičiuojamas intervalo ilgis \mil{interval_length = right_bound - left_bound}, taškai
+    \begin{minted}{python}
+        x1 = right_bound - tau * interval_length 
+        x2 = left_bound + tau * interval
+    \end{minted}
+    Paskaičiuojama \mil{f(x1)} ir \mil{f(x2)}
+    \item Jei \mil{f(x2) < f(x1)}:
+    \begin{enumerate}
+        \item Atmetama intervalo dalis \mil{[left_bound, x1)} priskiriant \mil{left_bound = x1}, perskaičiuojamas \mil{interval_length}
+        \item \mil{x1 = x2} (Kairiuoju tašku \mil{x1} tampa anksčiau buvęs dešinysis taškas \mil{x2})
+        \item Naujasis dešinysis taškas \mil{x2 = left_bound + tau * interval_length}, apskaičiuojamas \mil{f(x2)}
+    \end{enumerate}
+    \item Kitu atveju:
+    \begin{enumerate}
+        \item Atmetama intervalo dalis \mil{(x2, right_bound]} priskiriant \mil{right_bound = x2},
+        perskaičiuojamas \mil{interval_length}
+        \item \mil{x2 = x1} (Dešiniuoju tašku \mil{x2} tampa anksčiau buvęs kairysis taškas \mil{x1}) 
+        \item Naujasis kairysis taškas \mil{x1 = right_bound - tau * interval_length}, apskaičiuojamas \mil{f(x1)}
+    \item Jei \mil{interval_length} yra pakankamai mažas (mažesnis už $\epsilon$, t.y., nurodytą tikslumą, kode įvardintą kaip \mil{tolerance_lipschitz_constant}, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į 2 punktą. 
+    \end{enumerate}
 \end{enumerate}
 
 \pagebreak
@@ -281,7 +300,7 @@ Algoritmo žingsniai:
 \pagebreak
 
 \subsection{Niutono metodas}
-Trumpas metodo aprašymas.
+
 
 \section{Rezultatai}
 Gauti šie rezultatai:
