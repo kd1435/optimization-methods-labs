@@ -14,8 +14,10 @@
     urlcolor=cyan,
 }
 \usepackage{csquotes}
+\usepackage{enumitem}
 
 \newcommand{\mil}{\mintinline{python}}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
 
 \title{Vienmatis optimizavimas}
 \author{Kristupas Dansevičius}
@@ -85,17 +87,111 @@ class ObjectiveFunction:
 
 \section{Metodai}
 \subsection{Intervalo dalijimo pusiau metodas}
+\subsubsection*{Naudojami taškai}
 Tai tritaškis intervalo dalijimo pusiau metodas (t.y., kiekvienai optimizavimo algoritmo iteracijai naudojami 3 taškai), kurio principas yra itin paprastas. Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, panaudojami 3 taškai:
 \begin{itemize}
-    \item \mil{x_middle} - vidurinis taškas esantis intervalo viduryje, \mil{x_{middle} = (left_bound + b) / 2}
-    \item \mil{x_1} - tarp kairiojo intervalo krašto \mil{left_bound} ir vidurinio taško \mil{x_middle} esantis taškas, \mil{x_1 = (b - a) * 0.25}
-    \item \mil{x_2} - analogiškai kaip \mil{x_1}, tik kitoje intervalo pusėje tarp \mil{x_middle} ir \mil{right_bound} esantis taškas, \mil{x_2 = (b - a) * 0.75}
+    \item \mil{x_middle} - vidurinis taškas esantis intervalo viduryje, \mil{x_middle = (left_bound + right_bound) / 2}.
+    \item \mil{x_1} - tarp kairiojo intervalo krašto \mil{left_bound} ir vidurinio taško \mil{x_middle} esantis taškas, \mil{x_1 = left_bound + interval_length / 4}
+    \item \mil{x_2} - analogiškai kaip \mil{x_1}, tik kitoje intervalo pusėje tarp \mil{x_middle} ir \mil{right_bound} esantis taškas, \mil{x_2 = right_bound - interval_length / 4}
 \end{itemize}
+Kiekvienam šių taškų programoje kviečiama tikslo funkcija \mil{f(x)}, kaip tik tas taškas naujai paskaičiuotas ir turės prieš tai nebuvusią poziciją intervale. Paskaičiuotos tikslo funkcijos reikšmės taškuose saugomos.
 
-Šio metodo įgyvendinimas programiniam kode pateikiamas ``suprastinamas"", be nereikalingų komponentų panaudotų vizualizacijai ir reikšmių spausdinimui konsolėje:
+\pagebreak
+\subsubsection*{Metodo algoritmas}
+Algoritmo žingsniai:
+\begin{enumerate}
+    \item Paskaičiuojami \mil{x_middle}, \mil{interval_length}, \mil{f(x_middle)}
+    \item Paskaičiuojami \mil{x_1}, \mil{x_2}, \mil{f(x_1)}, \mil{f(x_2)}
+    \item Jei \mil{f(x_1) < f(x_middle)}, tai:
+    \begin{enumerate}
+        \item Atmetamas \mil{(x_middle, right_bound]} atliekant keitimą \mil{right_bound = x_middle}
+        \item Intervalo centru tampa \mil{x_1}, tad atliekamas priskyrimas \mil{x_middle = x_1}
+        \item Nušokama į 6 punktą
+    \end{enumerate}
+    \item Jei \mil{f(x_2) < f(x_middle)}, tai:
+    \begin{enumerate}
+        \item Atmetamas \mil{[left_bound, x_middle)} analogiškai keičiant \mil{left_bound = x_middle}
+        \item Intervalo centru tampa \mil{x_2}, tad atliekamas priskyrimas \mil{x_middle = x_2}
+        \item Nušokama į 6 punktą
+    \end{enumerate}
+    \item Jei prieinamas paskutinis atvejis, t.y., atliekamoje iteracijoje mažiausia tikslo funkcijos reikšmė turima su intervalo centru \mil{x_middle}: 
+    \begin{enumerate}
+        \item Intervalo centru \mil{x_middle} ir lieka, atmetama po 0.25 intervalo nuo abiejų kraštų. Reiškia, atmetami intervalai \mil{[left_bound, x_1)} ir \mil{(x_2, right_bound]} atliekant priskyrimus \mil{left_bound = x_1} ir \mil{right_bound = x_2}
+    \end{enumerate}
+    \item Skaičiuojamas \mil{interval_length}, kuris, jei yra pakankamai mažas (mažesnis už 
+    $\epsilon$, t.y., nurodytą tikslumą, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į antrą punktą. Suprogramuotam metode einamoje iteracijoje \mil{x_2} ir \mil{f(x_2)} neskaičiuojami, kai 3-ame punkte tikrinimo sąlyga grąžina tiesą 
+\end{enumerate}
+
+\pagebreak
+\subsubsection*{Programinis kodas}
+Šio metodo įgyvendinimas programiniam kode čia pateikiamas ``suprastinamas'', be kodo eilučių darančių tarpinių metodo iteracijų reikšmių spausdinimą
 
 \begin{minted}{python}
+def bisection_method(
+        objective_function: ObjectiveFunction, 
+        interval: tuple[int, int] = (0, 10), 
+        tolerance_lipschitz_constant: float = 10**-4
+        ) -> OptimizationResult:
+    
+    # Points kept for plotting later
+    x_min: float
+    xs: list[float] = []
+    
+    left_bound: float = interval[0]
+    right_bound: float = interval[1]
+    interval_length: float = right_bound - left_bound
 
+    objective_function.reset()
+    f = objective_function.__call__
+
+    x_middle: float = (left_bound + right_bound) / 2 # 1.
+    x1: float | None = None
+    x2: float | None = None
+    f_x_middle: float = f(x_middle) # 1.
+    f_x1: float | None = None
+    f_x2: float | None = None
+
+    iteration: int = 0
+    while interval_length > tolerance_lipschitz_constant: # 6
+        interval_length = right_bound - left_bound
+            
+        x1 = left_bound + interval_length / 4 # 2.
+        f_x1 = f(x1) # 2.
+
+        xs.append(x1)
+        xs.append(x_middle)
+        
+        if f_x1 < f_x_middle: # 3. x_middle becomes x_1
+            right_bound = x_middle # 3.1
+            x_middle = x1 # 3.2
+            f_x_middle = f_x1 # 3.2
+            interval_length = right_bound - left_bound
+            iteration += 1
+            continue # 6. is while loop condition
+
+        else: # 2.
+            x2 = right_bound - interval_length / 4 # 2.
+            f_x2 = f(x2) # 2.
+            xs.append(x2)
+            if f_x2 < f_x_middle: # 4. x_middle becomes x_2
+                left_bound = x_middle # 4.1 
+                x_middle = x2 # 4.2 
+                f_x_middle = x2 # 4.2
+            else: # 5. x_middle stays x_middle
+                x_middle = x_middle
+                left_bound = x1 # 5.1 
+                right_bound = x2 # 5.1
+
+        interval_length = right_bound - left_bound
+        iteration += 1
+    # Loop end
+    x_min: float = (left_bound + right_bound) / 2
+    return OptimizationResult(
+        x_min=x_min, 
+        xs=xs, 
+        iterations=iteration, 
+        function_calls=objective_function.calls
+    )
 \end{minted}
 
 \subsection{Auksinio pjūvio metodas}
@@ -106,7 +202,6 @@ Trumpas metodo aprašymas.
 
 \section{Rezultatai}
 Gauti šie rezultatai:
-
 \begin{itemize}
     \item Intervalo dalijimo pusiau metodas: 
         $x_{\min} \approx 2.236$, iteracijų: 17, funkcijos iškvietimų: 28
@@ -118,7 +213,6 @@ Gauti šie rezultatai:
 
 \section{Vizualizacija}
 Žemiau pateikiamos tikslo funkcijos ir taikytų metodų vizualizacijos.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth,height=10cm]{figure-1.jpeg}
@@ -134,11 +228,12 @@ Gauti šie rezultatai:
 
 \section{Kodas}
 \inputminted{python}{../code/main.py}
-\section{Šaltiniai}
 
+\section{Šaltiniai}
 \begin{enumerate}
     \item Python paketo \mintinline{python}{sympy} oficialaus puslapio 2017-ųjų metų užrašų tipo mokymo programa / tutorial: \url{https://www.sympy.org/scipy-2017-codegen-tutorial/notebooks/22-lambdify.html}
     \item Simbolinių išraiškų Wikipedia šaltinis:\url{https://en.wikipedia.org/wiki/S-expression}
+    \item Paskaitų skaidrės: ``moodle'' sistemoje pateiktos dėstytojo J. Žilinsko paskaitų skaidrės
 \end{enumerate}
 
 \end{document}
