@@ -15,6 +15,7 @@
 }
 \usepackage{csquotes}
 \usepackage{enumitem}
+\usepackage{microtype}
 
 \newcommand{\mil}{\mintinline{python}}
 \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
@@ -37,9 +38,9 @@ intervalo dalijimo pusiau metodas, auksinio pjūvio metodas ir Niutono metodas.
 \begin{enumerate}
     \item Suprogramuoti šiuos metodus (naudota Python programavimo kalba)
     \item Aprašyti duotąją \textbf{tikslo funkciją} - tai funkcija, pagal kurią yra optimizuojama naudojant minėtus metodus, t.y., ieškomas jos \textbf{lokalus minimumas}, kuris ir bus ir \textbf{globalusis minimumas}. Taip yra todėl, kad funkcija nurodytam intervale yra \textbf{iškiloji}: tarp bet kurių dviejų funkcijos taškų nubrėžus liniją, visos funkcijos reikšmės yra žemiau šios linijos. Kitaip pasakius, funkcijoje nėra jokių ``duobių'', į kurias optimizuojant galima patekti ir ``užstrigti'', kurios būtų tik lokalūs, bet ne globalūs minimumai. Pagal reikalavimus (pritaikius studento numerio porą skaitmenų), duotoji tikslo funkcija yra:
-        \begin{equation}
+        \begin{equation*}
             f(x) = \frac{(x^2 - 5)^2}{4}
-        \end{equation}
+        \end{equation*}
     \item Minimizuoti funkciją intervalo metodais - intervalo dalijimo pusiau ir auksinio pjūvio - naudojant intervalą $[0,10]$ iki tikslumo $10^{-4}$ bei Niutono metodu nuo $x_0 = 5$ kol žingsnio ilgis (Lipschitzo konstanta / tolerancija) didesnis už $10^{-4}$
     \item Palyginti rezultatus: gauti sprendiniai, rastas funkcijos minimumo įvertis (taško, kuriame funkcija turi mažiausią reikšmę), atliktų žingsnių (iteracijų) ir funkcijų skaičiavimų skaičius (tikslo funkcijos ``iškvietimų'' programoje)
     \item Vizualizuoti tikslo funkciją ir bandymo taškus (kuriuose paskaičiuota tikslo funkcija ir buvo naudojami algoritme)
@@ -85,42 +86,45 @@ class ObjectiveFunction:
         self.calls = 0
 \end{minted}
 
-\section{Metodai}
+\section{Optimizavimo metodai}
 \subsection{Intervalo dalijimo pusiau metodas}
 \subsubsection*{Naudojami taškai}
-Tai tritaškis intervalo dalijimo pusiau metodas (t.y., kiekvienai optimizavimo algoritmo iteracijai naudojami 3 taškai), kurio principas yra itin paprastas. Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, panaudojami 3 taškai:
+Tai tritaškis intervalo dalijimo pusiau metodas (t.y., kiekvienai optimizavimo algoritmo iteracijai naudojami 3 taškai), kurio principas yra itin paprastas. 
+Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, panaudojami 3 taškai:
 \begin{itemize}
-    \item \mil{x_middle} - vidurinis taškas esantis intervalo viduryje, \mil{x_middle = (left_bound + right_bound) / 2}.
-    \item \mil{x_1} - tarp kairiojo intervalo krašto \mil{left_bound} ir vidurinio taško \mil{x_middle} esantis taškas, \mil{x_1 = left_bound + interval_length / 4}
-    \item \mil{x_2} - analogiškai kaip \mil{x_1}, tik kitoje intervalo pusėje tarp \mil{x_middle} ir \mil{right_bound} esantis taškas, \mil{x_2 = right_bound - interval_length / 4}
+    \item \mil{x_middle} - vidurinis taškas esantis intervalo viduryje, \\ \mil{x_middle = (left_bound + right_bound) / 2} 
+    \item \mil{x1} - tarp kairiojo intervalo krašto \mil{left_bound} ir vidurinio taško \mil{x_middle} esantis taškas, \mil{x1 = left_bound + interval_length / 4}
+    \item \mil{x2} - analogiškai kaip \mil{x1}, tik kitoje intervalo pusėje tarp \mil{x_middle} ir \mil{right_bound} esantis taškas, \mil{x2 = right_bound - interval_length / 4}
 \end{itemize}
-Kiekvienam šių taškų programoje kviečiama tikslo funkcija \mil{f(x)}, kaip tik tas taškas naujai paskaičiuotas ir turės prieš tai nebuvusią poziciją intervale. Paskaičiuotos tikslo funkcijos reikšmės taškuose saugomos.
+Kiekvienam šių taškų programoje kviečiama tikslo funkcija \mil{f(x)}, kaip tik tą tašką tenka naujai paskaičiuoti ir jis turės prieš tai nebuvusią poziciją intervale. Paskaičiuotos tikslo funkcijos reikšmės taškuose saugomos (ir ``perduodamos'' kitam taškui kai atliekamas vieno taško reiškmės priskyrimas kitam)
 
 \pagebreak
 \subsubsection*{Metodo algoritmas}
 Algoritmo žingsniai:
 \begin{enumerate}
     \item Paskaičiuojami \mil{x_middle}, \mil{interval_length}, \mil{f(x_middle)}
-    \item Paskaičiuojami \mil{x_1}, \mil{x_2}, \mil{f(x_1)}, \mil{f(x_2)}
-    \item Jei \mil{f(x_1) < f(x_middle)}, tai:
+    \item Paskaičiuojami \mil{x1}, \mil{x2}, \mil{f(x1)}, \mil{f(x2)}
+    \item Jei \mil{f(x1) < f(x_middle)}, tai:
     \begin{enumerate}
         \item Atmetamas \mil{(x_middle, right_bound]} atliekant keitimą \mil{right_bound = x_middle}
-        \item Intervalo centru tampa \mil{x_1}, tad atliekamas priskyrimas \mil{x_middle = x_1}
+        \item Intervalo centru tampa \mil{x1}, tad atliekamas priskyrimas \mil{x_middle = x1}
         \item Nušokama į 6 punktą
     \end{enumerate}
-    \item Jei \mil{f(x_2) < f(x_middle)}, tai:
+    \item Jei \mil{f(x2) < f(x_middle)}, tai:
     \begin{enumerate}
         \item Atmetamas \mil{[left_bound, x_middle)} analogiškai keičiant \mil{left_bound = x_middle}
-        \item Intervalo centru tampa \mil{x_2}, tad atliekamas priskyrimas \mil{x_middle = x_2}
+        \item Intervalo centru tampa \mil{x2}, tad atliekamas priskyrimas \mil{x_middle = x2}
         \item Nušokama į 6 punktą
     \end{enumerate}
     \item Jei prieinamas paskutinis atvejis, t.y., atliekamoje iteracijoje mažiausia tikslo funkcijos reikšmė turima su intervalo centru \mil{x_middle}: 
     \begin{enumerate}
-        \item Intervalo centru \mil{x_middle} ir lieka, atmetama po 0.25 intervalo nuo abiejų kraštų. Reiškia, atmetami intervalai \mil{[left_bound, x_1)} ir \mil{(x_2, right_bound]} atliekant priskyrimus \mil{left_bound = x_1} ir \mil{right_bound = x_2}
+        \item Intervalo centru \mil{x_middle} ir lieka, atmetama po 0.25 intervalo nuo abiejų kraštų. Reiškia, atmetami intervalai \mil{[left_bound, x1)} ir \mil{(x2, right_bound]} atliekant priskyrimus \mil{left_bound = x1} ir \mil{right_bound = x2}
     \end{enumerate}
     \item Skaičiuojamas \mil{interval_length}, kuris, jei yra pakankamai mažas (mažesnis už 
-    $\epsilon$, t.y., nurodytą tikslumą, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į antrą punktą. Suprogramuotam metode einamoje iteracijoje \mil{x_2} ir \mil{f(x_2)} neskaičiuojami, kai 3-ame punkte tikrinimo sąlyga grąžina tiesą 
+    $\epsilon$, t.y., nurodytą tikslumą, kuris darbe nurodytas būti $10^{-4}$, skaičiavimai baigiami, o jei ne - einama į antrą punktą. 
 \end{enumerate}
+
+Suprogramuotam metode einamoje iteracijoje \mil{x2} ir \mil{f(x2)} neskaičiuojami, kai 3-ame punkte tikrinimo sąlyga grąžina tiesą
 
 \pagebreak
 \subsubsection*{Programinis kodas}
@@ -161,7 +165,7 @@ def bisection_method(
         xs.append(x1)
         xs.append(x_middle)
         
-        if f_x1 < f_x_middle: # 3. x_middle becomes x_1
+        if f_x1 < f_x_middle: # 3. x_middle becomes x1
             right_bound = x_middle # 3.1
             x_middle = x1 # 3.2
             f_x_middle = f_x1 # 3.2
@@ -173,7 +177,7 @@ def bisection_method(
             x2 = right_bound - interval_length / 4 # 2.
             f_x2 = f(x2) # 2.
             xs.append(x2)
-            if f_x2 < f_x_middle: # 4. x_middle becomes x_2
+            if f_x2 < f_x_middle: # 4. x_middle becomes x2
                 left_bound = x_middle # 4.1 
                 x_middle = x2 # 4.2 
                 f_x_middle = x2 # 4.2
@@ -194,8 +198,87 @@ def bisection_method(
     )
 \end{minted}
 
+\pagebreak
 \subsection{Auksinio pjūvio metodas}
-Trumpas metodo aprašymas.
+\subsubsection*{Naudojami taškai}
+Šis metodas yra dvitaškis intervalo dalijimo metodas (bet ne pusiau, su viena iteracija atmetama didesnė intervalo dalis nei su intervalo dalijimo pusiau metodu). Intervale \mil{[left_bound, right_bound]}, kurio ilgis \mil{interval_length = right_bound - left_bound}, kiekvienai iteracijai naudojami tik 2 taškai, \mil{x1} ir \mil{x2}. $\tau$ yra Fibonačio skaičius, gaunamas iš lygybės
+\begin{equation*}
+    \frac{1 - \tau}{1} = \frac{\tau - (1 - \tau)}{\tau}
+\end{equation*}
+, iš kurios išplaukia
+\begin{equation*}
+    \tau = (-1 \pm \sqrt{5}) / 2
+\end{equation*}
+
+\pagebreak
+\subsubsection*{Metodo algoritmas}
+Algoritmo žingsniai:
+\begin{enumerate}
+    \item Paskaičiuojamas intervalo ilgis \mil{interval_length}, taškai \mil{x1 = }
+\end{enumerate}
+
+\pagebreak
+\subsubsection*{Programinis kodas}
+Šio metodo įgyvendinimas programiniam kode čia pateikiamas ``suprastinamas'', be kodo eilučių darančių tarpinių metodo iteracijų reikšmių spausdinimą
+
+\begin{minted}{python}
+    def golden_section_method(
+        objective_function: ObjectiveFunction, 
+        interval: tuple[int, int] = (0, 10), 
+        tolerance_lipschitz_constant: float = 10**-4
+        ) -> OptimizationResult:
+    
+    objective_function.reset()
+    f = objective_function.__call__
+    left_bound: float 
+    right_bound: float 
+    left_bound, right_bound = interval
+    interval_length: float = right_bound - left_bound # 1.
+    
+    tau: float = (-1 + sqrt(5)) / 2
+    x1: float = right_bound - tau * interval_length # 1.
+    x2: float = left_bound + tau * interval_length # 1.
+    f_x1: float = f(x1) # 1.
+    f_x2: float = f(x2) # 1.
+
+    # Points kept for plotting later
+    xs: list[float] = [x1, x2]
+    
+    iteration: int = 0
+    while interval_length > tolerance_lipschitz_constant:
+        print("Current iteration:", iteration)
+        print("Interval:", [left_bound, right_bound])
+        print("Interval length:", interval_length)
+        print()
+        
+        if f_x2 < f_x1: # 2.
+            left_bound = x1 # 2.1 remove interval [left_bound; x1)
+            interval_length = right_bound - left_bound # 2.1 / 3.1
+            x1 = x2 # 2.2
+            f_x1 = f_x2
+            x2 = left_bound + tau * interval_length # 2.3
+            f_x2 = f(x2) # 2.3
+            xs.append(x2)
+        else: # 3.
+            right_bound = x2 # 3.1 remove interval (x2; right_bound]
+            interval_length = right_bound - left_bound # 2.1 / 3.1
+            x2 = x1 # 3.2
+            f_x2 = f_x1
+            x1 = right_bound - tau * interval_length # 3.3
+            f_x1 = f(x1) # 3.3
+            xs.append(x1)
+            
+        iteration += 1
+        
+    x_min: float = (left_bound + right_bound) / 2
+    return OptimizationResult(
+        x_min=x_min, 
+        xs=xs, 
+        iterations=iteration, 
+        function_calls=objective_function.calls
+    )
+\end{minted}
+\pagebreak
 
 \subsection{Niutono metodas}
 Trumpas metodo aprašymas.
@@ -223,11 +306,12 @@ Gauti šie rezultatai:
 \begin{itemize}
     \item Visi metodai rado minimumą ties $x \approx \sqrt{5}$.
     \item Intervalo metodai (intervalo dalijimo pusiau ir auksinio pjūvio) reikalauja daugiau iteracijų ir tikslo funkcijos iškvietimų, bet yra paprastesni.
-    \item Su naudotais parametrais (tikslo funkcija / intervalu / tikslumu) auksinio pjūvio optimizavimo efektyvumo pranašumas prieš intervalo dalijimo pusiau optimizavimo metodą pagal tikslo funkcijos kvietimų kiekį neišryškėjo
 \end{itemize}
 
+\pagebreak
 \section{Kodas}
 \inputminted{python}{../code/main.py}
+\pagebreak
 
 \section{Šaltiniai}
 \begin{enumerate}
