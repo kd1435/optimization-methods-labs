@@ -1,7 +1,4 @@
-# optimization-lab1
-Optimization Methods course, lab 1: One-dimensional optimization algorithms
-
-### Assignment (original)
+# 1 Vienmatis Optimizavimas
 1. Suprogramuokite vienmačio optimizavimo intervalo dalijimo pusiau, auksinio pjūvio ir Niutono metodo algoritmus.
 
 1. Aprašykite tikslo funkciją f(x) = (x^2 − 5)^2 / 4
